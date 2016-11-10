@@ -1,0 +1,25 @@
+#!/usr/bin/python
+
+import json
+
+with open('sourcer.json') as file:
+    data = json.load(file)
+
+if data['sourcer-version'] < 0.1:
+    raise Exception('Could not detect sourcer version greater than 0.1')
+
+for library, definition in data['libraries'].items():
+    if definition['type'] == 'git':
+        arguments = [
+            'git',
+            'clone',
+            definition['url'],
+            data['target'] + library
+        ]
+
+        if 'branch' in definition:
+            arguments = arguments + ['--branch', definition['branch']]
+
+        print(' '.join(arguments))
+    else:
+        raise Exception('Unknown type (' + definition['type'] + ') for library: ' + library)
